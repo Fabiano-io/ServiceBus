@@ -1,15 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Configuration;
-using System.Text;
+﻿using System.Configuration;
 using Microsoft.Azure.ServiceBus;
 
 namespace ServiceBusSample.SeviceBus
 {
     class ServiceBusTopic
     {
-
-        private string _serviceBusConnectionStringSend;
+        private readonly string _serviceBusConnectionStringSend;
 
         public ServiceBusTopic()
         {

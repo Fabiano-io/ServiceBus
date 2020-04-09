@@ -1,6 +1,6 @@
 ﻿using System;
 using Microsoft.Azure.ServiceBus;
-using System.Configuration;
+using System.Diagnostics;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -26,6 +26,7 @@ namespace ServiceBusSample.SeviceBus
             }
             catch (Exception ex)
             {
+                Trace.TraceInformation($"Erro: {ex.Message}");
                 Console.WriteLine(ex);
                 throw;
             }

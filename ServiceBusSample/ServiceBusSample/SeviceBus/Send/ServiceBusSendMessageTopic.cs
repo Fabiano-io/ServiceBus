@@ -1,7 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using Microsoft.Azure.ServiceBus;
-using System.Configuration;
+using System.Diagnostics;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -19,15 +18,16 @@ namespace ServiceBusSample.SeviceBus
         {
             try
             {
-                var msg = new Message(Encoding.UTF8.GetBytes(Newtonsoft.Json.JsonConvert.SerializeObject(message)));
-
-                msg.ContentType = filter.ContentType;
-                msg.CorrelationId = filter.CorrelationId;
-                msg.Label = filter.Label;
-                msg.ReplyTo = filter.ReplyTo;
-                msg.ReplyToSessionId = filter.ReplyToSessionId;
-                msg.SessionId = filter.SessionId;
-                msg.To = filter.To;
+                var msg = new Message(Encoding.UTF8.GetBytes(Newtonsoft.Json.JsonConvert.SerializeObject(message)))
+                {
+                    ContentType = filter.ContentType,
+                    CorrelationId = filter.CorrelationId,
+                    Label = filter.Label,
+                    ReplyTo = filter.ReplyTo,
+                    ReplyToSessionId = filter.ReplyToSessionId,
+                    SessionId = filter.SessionId,
+                    To = filter.To
+                };
 
                 await _topicClient.SendAsync(msg);
 
@@ -35,6 +35,7 @@ namespace ServiceBusSample.SeviceBus
             }
             catch (Exception ex)
             {
+                Trace.TraceInformation($"Erro: {ex.Message}");
                 Console.WriteLine(ex);
                 throw;
             }

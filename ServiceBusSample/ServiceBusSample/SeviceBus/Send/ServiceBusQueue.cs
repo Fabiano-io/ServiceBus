@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Configuration;
-using System.Text;
+﻿using System.Configuration;
 using Microsoft.Azure.ServiceBus;
 
 namespace ServiceBusSample.SeviceBus
@@ -9,15 +6,15 @@ namespace ServiceBusSample.SeviceBus
     
     class ServiceBusQueue
     {
-        private string _serviceBusConnectionStringSend;
+        private readonly string _serviceBusConnectionStringSend;
         public ServiceBusQueue()
         {
             _serviceBusConnectionStringSend = ConfigurationManager.AppSettings["ServiceBusConnectionStringSend"];
         }
 
-        public QueueClient GetQueue(string QueueName)
+        public QueueClient GetQueue(string queueName)
         {
-            return new QueueClient(_serviceBusConnectionStringSend, QueueName);
+            return new QueueClient(_serviceBusConnectionStringSend, queueName);
         }
 
     }

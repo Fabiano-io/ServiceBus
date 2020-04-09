@@ -1,8 +1,5 @@
 ﻿using ServiceBusSample.SeviceBus;
 using System;
-using System.Collections.Generic;
-using System.Net.Http.Headers;
-using System.Reflection.Emit;
 using Microsoft.Azure.ServiceBus;
 
 namespace ServiceBusSample
@@ -11,11 +8,9 @@ namespace ServiceBusSample
     {
         static void Main(string[] args)
         {
-
-            ServiceBusSendMessage sb = new ServiceBusSendMessage();
+            var sb = new ServiceBusSendMessage();
 
             // Enviando mensagem para a Fila
-
             var produtos = new
             {
                 Produto = "Nome do Produto",
@@ -26,7 +21,6 @@ namespace ServiceBusSample
 
 
             // Enviando mensagem para o tópico 
-
             var dados = new
             {
                 Campo1 = "Valor do Campo 1",
@@ -35,9 +29,10 @@ namespace ServiceBusSample
             sb.SendMessage("topico-teste", dados, new CorrelationFilter()).GetAwaiter().GetResult();
 
 
-            CorrelationFilter filtro = new CorrelationFilter();
-
-            filtro.Label = "cliente";   // Os filtros são case sensitive
+            CorrelationFilter filtro = new CorrelationFilter
+            {
+                Label = "cliente"   // Os filtros são case sensitive
+            };
             var cliente = new
             {
                 Nome = "Nome do Cliente"
