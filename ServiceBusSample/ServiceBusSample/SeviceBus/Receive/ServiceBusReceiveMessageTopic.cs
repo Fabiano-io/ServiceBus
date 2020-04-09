@@ -7,37 +7,35 @@ using System.Threading.Tasks;
 
 namespace ServiceBusSample.SeviceBus
 {
-    class ServiceBusReceiveMessageQueue
+    class ServiceBusReceiveMessageTopic
     {
-        private string _serviceBusConnectionString;
-        private string _queueName;
+        private string _serviceBusConnectionStringReceive;
 
-        private static IQueueClient _queueClient;
+        private static ITopicClient _topicClient;
+        private static ISubscriptionClient _subscriptionClient;
 
-        public ServiceBusReceiveMessageQueue()
+        public ServiceBusReceiveMessageTopic()
         {
-            _serviceBusConnectionString = ConfigurationManager.AppSettings["ServiceBusConnectionString"];
-            _queueName = ConfigurationManager.AppSettings["QueueName"];
+            _serviceBusConnectionStringReceive = ConfigurationManager.AppSettings["ServiceBusConnectionStringReceive"];
         }
 
         static async Task ProcessMessagesAsync(Message message, CancellationToken token)
         {
+            // Process the message
             var sequencia = message.SystemProperties.SequenceNumber;
             var mensagem = Encoding.UTF8.GetString(message.Body);
 
             Console.WriteLine($"Sequencia: {sequencia} - Mensagem: {mensagem}.");
 
             // Complete the message so that it is not received again.
-            // This can be done only if the queueClient is opened in ReceiveMode.PeekLock mode (which is default).
-            await _queueClient.CompleteAsync(message.SystemProperties.LockToken);
+            // This can be done only if the subscriptionClient is opened in ReceiveMode.PeekLock mode (which is default).
+            await _subscriptionClient.CompleteAsync(message.SystemProperties.LockToken);
         }
 
         // Use this Handler to look at the exceptions received on the MessagePump
         static Task ExceptionReceivedHandler(ExceptionReceivedEventArgs exceptionReceivedEventArgs)
         {
-            var erro = exceptionReceivedEventArgs.Exception;
-
-            Console.WriteLine($"Message handler encountered an exception {erro}.");
+            Console.WriteLine($"Message handler encountered an exception {exceptionReceivedEventArgs.Exception}.");
             return Task.CompletedTask;
         }
 
@@ -51,17 +49,18 @@ namespace ServiceBusSample.SeviceBus
                 MaxConcurrentCalls = 1,
 
                 // Indicates whether MessagePump should automatically complete the messages after returning from User Callback.
-                // False value below indicates the Complete will be handled by the User Callback as seen in `ProcessMessagesAsync`.
+                // False below indicates the Complete will be handled by the User Callback as in `ProcessMessagesAsync` below.
                 AutoComplete = false
             };
 
             // Register the function that will process messages
-            _queueClient.RegisterMessageHandler(ProcessMessagesAsync, messageHandlerOptions);
+            _subscriptionClient.RegisterMessageHandler(ProcessMessagesAsync, messageHandlerOptions);
         }
 
-        public void IniciaVerificacaoFila()
+        public void IniciaVerificacaoFila(string topicName, string subscriptionName)
         {
-            _queueClient =  new QueueClient(_serviceBusConnectionString, _queueName);
+            _topicClient = new TopicClient(_serviceBusConnectionStringReceive, topicName);
+            _subscriptionClient = new SubscriptionClient(_serviceBusConnectionStringReceive, topicName, subscriptionName);
 
             // Register QueueClient's MessageHandler and receive messages in a loop
             RegisterOnMessageHandlerAndReceiveMessages();
@@ -69,7 +68,8 @@ namespace ServiceBusSample.SeviceBus
 
         public async Task PararVerificacaoFila()
         {
-            await _queueClient.CloseAsync();
+            await _subscriptionClient.CloseAsync();
+            await _topicClient.CloseAsync();
         }
     }
 }

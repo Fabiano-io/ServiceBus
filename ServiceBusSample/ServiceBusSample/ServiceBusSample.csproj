@@ -6,6 +6,12 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="SeviceBus\ServiceBusBase.cs" />
+    <Compile Remove="SeviceBus\ServiceBusEnviaMensagem.cs" />
+    <Compile Remove="SeviceBus\ServiceBusReceiveMessage.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Microsoft.Azure.ServiceBus" Version="4.1.2" />
     <PackageReference Include="System.Configuration.ConfigurationManager" Version="4.7.0" />
   </ItemGroup>
