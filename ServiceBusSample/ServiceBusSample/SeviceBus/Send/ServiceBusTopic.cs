@@ -1,4 +1,5 @@
-﻿using System.Configuration;
+﻿using System;
+using System.Configuration;
 using Microsoft.Azure.ServiceBus;
 
 namespace ServiceBusSample.SeviceBus
@@ -14,7 +15,17 @@ namespace ServiceBusSample.SeviceBus
 
         public ITopicClient GetTopic(string topicName)
         {
-            return new TopicClient(_serviceBusConnectionStringSend, topicName);
+            try
+            {
+                var topic = new TopicClient(_serviceBusConnectionStringSend, topicName);
+
+                return topic;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex);
+                throw;
+            }
         }
     }
 }

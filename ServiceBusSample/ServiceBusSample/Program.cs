@@ -18,6 +18,16 @@ namespace ServiceBusSample
             };
             sb.SendMessage("fila-teste", produtos).GetAwaiter().GetResult();
 
+            // Recebendo as mensagens da fila
+            var sbrmq = new ServiceBusReceiveMessageQueue();
+            sbrmq.IniciaVerificacaoFila("fila-teste");
+            Console.WriteLine("Verificando Fila.\n\rPressione qualquer tecla para finalizar a aplicação.");
+            Console.ReadKey();
+            sbrmq.PararVerificacaoFila().GetAwaiter().GetResult();
+
+
+
+
 
 
             // Enviando mensagem para o tópico 
@@ -29,18 +39,24 @@ namespace ServiceBusSample
             sb.SendMessage("topico-teste", dados, new CorrelationFilter()).GetAwaiter().GetResult();
 
 
-            CorrelationFilter filtro = new CorrelationFilter
+            CorrelationFilter filtroCliente = new CorrelationFilter
             {
-                Label = "cliente"   // Os filtros são case sensitive
+                Label = "Cliente",   // Os filtros são case sensitive
+                SessionId = Guid.NewGuid().ToString()
             };
             var cliente = new
             {
                 Nome = "Nome do Cliente"
             };
-            sb.SendMessage("topico-teste", cliente, filtro).GetAwaiter().GetResult();
+            sb.SendMessage("atualizacao-cliente", cliente, filtroCliente).GetAwaiter().GetResult();
 
 
-            filtro.Label = "endereco";
+            CorrelationFilter filtroEndereco = new CorrelationFilter
+            {
+                Label = "Endereco",   // Os filtros são case sensitive
+                SessionId = Guid.NewGuid().ToString()
+            };
+
             var endereco = new
             {
                 Rua = "Nome da rua",
@@ -48,21 +64,7 @@ namespace ServiceBusSample
                 Bairro = "Nome do Bairro",
                 Cidade = "Nome da Cidade"
             };
-            sb.SendMessage("topico-teste", endereco, filtro).GetAwaiter().GetResult();
-
-
-
-
-
-
-
-            // Recebendo as mensagens da fila
-            var sbrmq = new ServiceBusReceiveMessageQueue();
-            sbrmq.IniciaVerificacaoFila("fila-teste");
-            Console.WriteLine("Verificando Fila.\n\rPressione qualquer tecla para finalizar a aplicação.");
-            Console.ReadKey();
-            sbrmq.PararVerificacaoFila().GetAwaiter().GetResult();
-
+            sb.SendMessage("atualizacao-cliente", endereco, filtroEndereco).GetAwaiter().GetResult();
 
 
             //Recebendo mensagens do topico
