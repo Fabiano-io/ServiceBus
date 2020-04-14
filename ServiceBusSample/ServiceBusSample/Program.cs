@@ -41,20 +41,18 @@ namespace ServiceBusSample
 
             CorrelationFilter filtroCliente = new CorrelationFilter
             {
-                Label = "Cliente",   // Os filtros são case sensitive
-                SessionId = Guid.NewGuid().ToString()
+                Label = "Cliente"
             };
             var cliente = new
             {
-                Nome = "Nome do Cliente"
+                Nome = "Nome do Cliente 1"
             };
             sb.SendMessage("atualizacao-cliente", cliente, filtroCliente).GetAwaiter().GetResult();
 
 
             CorrelationFilter filtroEndereco = new CorrelationFilter
             {
-                Label = "Endereco",   // Os filtros são case sensitive
-                SessionId = Guid.NewGuid().ToString()
+                Label = "Endereco"
             };
 
             var endereco = new

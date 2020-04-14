@@ -1,6 +1,7 @@
 ﻿using System;
 using Microsoft.Azure.ServiceBus;
 using System.Diagnostics;
+using System.Security.Policy;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -26,6 +27,7 @@ namespace ServiceBusSample.SeviceBus
                     ReplyTo = filter.ReplyTo,
                     ReplyToSessionId = filter.ReplyToSessionId,
                     SessionId = filter.SessionId,
+                    MessageId = filter.MessageId ?? Guid.NewGuid().ToString(),
                     To = filter.To
                 };
 
